@@ -35,8 +35,39 @@ Get `AntiDialog.exe` from the [**Releases**](../../releases) page and run it. Th
 > **Windows SmartScreen:** the executable isn't code-signed, so Windows may show a blue warning the first time you run it.
 > Click **More info → Run anyway**.
 >
-> **Administrator prompt:** AntiDialog asks for admin rights on purpose. Many games, Genshin Impact included, run elevated,
-> and Windows blocks input sent from a non-elevated program to an elevated one.
+> **Administrator prompt:** this is expected. See [why it needs admin and what it does with it](#why-does-it-ask-for-administrator-rights-is-it-safe).
+
+## Why does it ask for administrator rights? Is it safe?
+
+**Short answer:** Genshin Impact runs as administrator, and Windows doesn't let a normal program send keys or clicks to an administrator window.
+That's the only reason AntiDialog asks for admin.
+
+**Details:**
+
+- Windows has a protection called **UIPI** (User Interface Privilege Isolation). A program running at normal privileges **cannot send input to a program running elevated**.
+  Genshin Impact (and many other games with anti-cheat) run elevated, so without admin rights AntiDialog's key presses would silently be ignored.
+- The only way around this without admin is the `uiAccess` manifest flag. Windows only allows that for **code-signed** apps **installed in Program Files**,
+  which would mean a paid certificate and no longer being portable.
+
+**What AntiDialog does with those rights, and what it doesn't:**
+
+| ✅ It does | ❌ It never does |
+|---|---|
+| Sends the key or click you chose, using the standard Windows `SendInput` API | Inject code into, read from, or modify the game or any other process |
+| Reads the F7 key state (`GetAsyncKeyState`) to start and stop | Log or record your keystrokes |
+| Draws its own overlay window on top of the screen | Connect to the internet: it has no networking code at all |
+| Saves its settings to `%APPDATA%\AntiDialog\config.ini` (or next to the `.exe` if AppData isn't writable) | Write anywhere else, install services or drivers, or touch the registry |
+| Opens the PayPal link in your browser **only if you click** Donate | Run at startup or keep running after you close it |
+
+**Don't just trust this README. Verify it yourself:**
+
+- The **whole program is one readable C file**: [`src/antidialog.c`](src/antidialog.c). Every Windows function it can call is listed in [`build.sh`](build.sh),
+  because the import libraries are generated from that exact list. There is no networking, registry, process-memory or hooking API in it.
+- **Build it yourself** with `./build.sh` (see [Building from source](#building-from-source)) and use your own `.exe`.
+- Each release lists the file's **SHA-256** hash, so you can check that your download matches:
+  `Get-FileHash .\AntiDialog.exe -Algorithm SHA256` in PowerShell.
+- Upload it to [VirusTotal](https://www.virustotal.com) if you like. A few heuristic engines may flag *any* auto-clicker
+  just because it sends simulated input. That's expected for this kind of tool.
 
 ## How to use
 
