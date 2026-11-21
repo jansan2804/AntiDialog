@@ -29,7 +29,7 @@ mklib shell32 ShellExecuteW
 clang --target=x86_64-pc-windows-msvc -O2 -ffreestanding -fno-builtin -fno-math-errno \
   -fno-stack-protector -mno-stack-arg-probe -Wall -Wextra -Wno-unused-parameter \
   -c src/antidialog.c -o "$OUT/antidialog.obj"
-lld-link /out:"$OUT/AntiDialog.exe" /subsystem:windows /entry:entry /nodefaultlib \
+lld-link /out:"$OUT/AntiDialog.exe" /subsystem:windows /entry:entry /nodefaultlib /Brepro \
   "$OUT/antidialog.obj" "$OUT/app.res" \
   "$OUT/kernel32.lib" "$OUT/user32.lib" "$OUT/gdi32.lib" "$OUT/comctl32.lib" "$OUT/winmm.lib" "$OUT/shell32.lib"
 echo "Built $OUT/AntiDialog.exe"

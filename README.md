@@ -63,7 +63,7 @@ That's the only reason AntiDialog asks for admin.
 
 - The **whole program is one readable C file**: [`src/antidialog.c`](src/antidialog.c). Every Windows function it can call is listed in [`build.sh`](build.sh),
   because the import libraries are generated from that exact list. There is no networking, registry, process-memory or hooking API in it.
-- **Build it yourself** with `./build.sh` (see [Building from source](#building-from-source)) and use your own `.exe`.
+- **Build it yourself** with `./build.sh` (see [Building from source](#building-from-source)). The build is **reproducible**: with the same compiler version you get a byte-identical `.exe`, so its SHA-256 matches the release.
 - Each release lists the file's **SHA-256** hash, so you can check that your download matches:
   `Get-FileHash .\AntiDialog.exe -Algorithm SHA256` in PowerShell.
 - Upload it to [VirusTotal](https://www.virustotal.com) if you like. A few heuristic engines may flag *any* auto-clicker
